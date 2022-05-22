@@ -1,0 +1,1517 @@
+@charset "UTF-8";
+html {
+  font-size: 100%;
+}
+body {
+  line-height: 1.7;
+  background-color: #eeeef6;
+  color: rgb(0, 0, 0);
+  letter-spacing: 0.1em;
+  font-family: 'Yu Gothic UI','Hiragino Kaku Gothic ProN','ヒラギノ角ゴ ProN W3','Hiragino Sans','Arial',sans-serif;
+  /*フッターの固定 (「ディスプレイの高さ＞コンテンツの高さ」のとき、フッターの下に隙間ができないように下部に固定する)*/
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 300px;
+  /*背景の三角形*/
+  &:after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    border: {
+      top: 16vw solid #fff;
+      right: 100vw solid transparent;
+    }
+    z-index: -2;
+  }
+  &:before {
+    content: '';
+    position: fixed;
+    bottom: 0; 
+    right: 0;
+    border: { 
+      bottom: 35vw solid #ffffff;
+      left: 70vw solid transparent;
+    }
+    z-index: -2;
+  }
+
+  img {
+    max-width: 100%;
+    vertical-align: bottom;
+  }
+  a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+  }
+  li {
+    list-style: none;
+  }
+  p {
+    text-align: justify;
+  }
+}
+
+/*------------------------------------
+  ロード画面
+--------------------------------------*/
+#loader {
+  width: 100%;
+  height: 110vh;  /*スマホの下部バーを考慮して少し広めに設定*/
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  .spinner {
+    width: 100px;
+    height: 100px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 45vh;
+    margin: auto;
+    background-color: #b8e4cb;
+    border-radius: 100%;  
+    animation: bubble 1.0s infinite ease-in-out;
+  } 
+}
+#loader.loaded {
+  animation: fadeout 2s ease 1s forwards;
+}
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    display: none;
+    opacity: 0;
+    z-index: -1;
+  }
+}
+@keyframes bubble {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/*------------------------------------
+  メディアクエリ
+  ・ブレイクポイント幅の参考：https://kanlog.org/pc-tab-sp/ 
+  ・1080pxはwrapperの最大幅
+--------------------------------------*/
+$pc: 1080px;
+$tab: 768px;
+$sp: 480px;
+@mixin pc {
+  @media screen and (max-width: ($pc)) {
+    @content;
+  }
+}
+@mixin tab {
+  @media screen and (max-width: ($tab)) {
+    @content;
+  } 
+}
+@mixin sp {
+  @media screen and (max-width: ($sp)) {
+    @content;
+  }
+}
+
+/*------------------------------------
+  ページ共通
+--------------------------------------*/
+/*wrapper・container*/
+.wrapper {
+  max-width: 1080px;
+  padding: 0 20px;
+  margin: 0 auto;
+  @include sp {
+    padding: 0 15px;
+  }
+}
+.container {
+  margin-bottom: 160px;
+  @include pc {
+    margin-bottom: 130px;
+  }
+  @include tab {
+    margin-bottom: 100px;
+  }
+  @include sp {
+    margin-bottom: 85px;
+  }
+}
+
+/*ヘッダーのロゴ*/
+.site-title {
+  position: fixed;
+  top: 5px;
+  left: 20px;
+  width: 240px;
+  line-height: 1px;
+  a {
+    display: block;
+  }
+  @include sp {
+    left: 10px;
+    top: 10px;
+    width: 210px;
+  }
+}
+/*各セクションタイトル*/
+.section-title {
+  font-size: 2.875rem;
+  margin: 0 0 50px 90px;
+  text-align: left;
+  position: relative;
+  @include pc{
+    font-size: 2.25rem;
+    margin-left: 70px;
+  }
+  @include tab{
+    font-size: 1.625rem;
+    margin-left: 56px;
+  }
+  @include sp{
+    font-size: 1.25rem;
+    margin-left: 40px;
+  }
+  .ja-title {
+    margin-left: 50px;
+    display: inline-block;
+    letter-spacing: 0.2em;
+    font: {
+      weight: lighter;
+      size: 1.375rem;
+    }
+    @include pc{
+      font-size: 1.125rem;
+    }  
+    @include tab{
+      display: none;
+    }  
+  }
+}
+
+/*トップへ戻るボタン　afterは内側の三角形*/
+#to-top {
+  width: 50px;
+  height: 50px;
+  display: none;
+  background-color: #121212;
+  border: solid 2px #fff;
+  border-radius: 50%;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 10;
+  transition: 0.3s;
+  &::after {
+    content: "";
+    border: {
+      left: 7px solid transparent;
+      right: 7px solid transparent;
+      bottom: 7px solid #fff;
+    }
+    position: relative;
+    left: 17px;
+    bottom: 3px;
+    transition: 0.3s;
+  }
+  &:hover {
+    border: solid 2px #3db184;   
+    &::after {
+      border-bottom: 7px solid #3db184;
+    }
+  }
+  
+}
+
+/*四角形のボタン  buttonは四角形、arrowは矢印部分のテンプレート*/
+.button {
+  text-align: center;
+  a {
+    width: 280px;
+    border: 1px solid #fff;
+    background-color: #121212;
+    color: #fff;
+    display: inline-block;
+    padding: 20px 0;
+    position: relative;
+    transition: 0.5s;
+    &:hover {
+      border: 1px solid #3db184;
+      color: #3db184;
+      text-shadow: 0 0 25px #fff;
+    }
+  }
+}
+.arrow {
+  &::before, &::after {
+    content: "";
+    position: absolute;
+    right: -60px;
+    height: 1px;
+    background-color: #fff;
+    transition: 0.3s;
+    @include tab {
+      display: none;
+    }
+  }
+  &::before {
+    width: 110px;
+    top: 40px;
+  }
+  &::after {
+    width: 15px;
+    top: 37px;
+    transform: rotate(25deg);
+  } 
+  &:hover{
+    &::before, &::after {
+      background-color: #3db184;
+      right: -70px;
+    }
+  }
+}
+
+#about .button {
+  margin-top: 40px;
+  a {
+    @extend .arrow;
+  }
+}
+#publication .button {
+  a {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+    &:hover {
+      border: 1px solid #3db184;
+      color: #3db184;
+    }
+    @extend .arrow;
+    &::before, &::after {
+      background-color: #000;
+    }
+  }
+}
+#footer .button a {
+  @include tab {
+    padding: 10px 0;
+    margin: 0;
+  }
+}
+
+/*下線付きのリンク（view more, back to pageなど）*/
+.line {  
+  margin-top: 20px;
+  display: inline-block;
+  position: relative;
+  transition: 0.3s;
+  &::after {
+    content: '';
+    position: absolute;
+    background-color: #3db184;
+    width: 100%;
+    height: 1px;
+    bottom: -1px;
+    left: 0;
+    transition: 0.5s ease-out;
+  }
+  &:hover {
+    opacity: 0.5;
+    &::after {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+  }  
+}
+
+/*inview
+  ・fadein : img、セクションタイトルなど
+  ・slide-l :セクションタイトル左側のブロック
+  ・slide-r :セクションタイトルの下線 */
+
+.fadein {
+  opacity: 0;
+}
+.slide-l {
+  position: absolute;
+  bottom: 0;
+  left: -90px;
+  width: 65px;
+  height: 130px;
+  opacity: 0;
+  background-color: #b8e4cb;
+  @include pc {
+    left: -70px;
+    width: 50px;
+    height: 100px;
+  }
+  @include tab {
+    left: -56px;
+    width: 40px;
+    height: 75px;
+  }
+  @include sp {
+    left: -40px;
+    width: 30px;
+    height: 60px;
+  }
+}
+.slide-r {
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  width: 90%;
+  height: 3px;
+  opacity: 0;
+  background-color: #b8e4cb;
+}
+
+/*inview処理後のアニメーション*/
+@mixin inview($role, $delay) {
+   animation: $role 1s ease-in-out $delay forwards;
+}
+.show {
+  @include inview(show, 0s)
+} 
+h2.show {
+  @include inview(show, 0.3s)
+} 
+p.show {
+  @include inview(show, 0.8s)
+} 
+.slide-left {
+  @include inview(slide-left, 0s)
+} 
+.slide-right {
+  @include inview(slide-right, 0s)
+}
+@keyframes show {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slide-left {
+  0% {
+    transform: translateX(300%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes slide-right {
+  0% {
+    transform: translateX(-150%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/*------------------------------------
+  bg (indexページ以外の、上部の見出し)
+--------------------------------------*/
+#research .bg {
+  background-image: url(../img/research.JPG);
+}
+#member .bg { 
+  background-image: url(../img/member.JPG);
+} 
+#publication .bg {
+  background-image: url(../img/publication.JPG);
+}
+#contact .bg {
+  background-image: url(../img/contact.JPG);
+}
+.bg {
+  margin: 90px 0;
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  @include pc {
+    height: 240px;
+  }
+  @include tab {
+    height: 180px;
+    margin-bottom: 60px;
+  }
+  @include sp {
+    height: 150px;
+  }
+}
+
+.page-title {
+  width: 100%; 
+  color: #fff;
+  text-align: center; 
+  font-size: 5.5rem;
+  text-shadow: 2px 2px 10px #3db184;
+  position: absolute;
+  top: 25%;
+  @include pc{
+    font-size: 4rem;
+  } 
+  @include tab{
+    font-size: 3.5rem;
+  } 
+  @include sp{ 
+    font-size: 2.5rem;
+  } 
+}
+
+/*------------------------------------
+  header
+--------------------------------------*/
+/*固定ヘッダー*/
+#header {
+  position: fixed;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 10px 10px #fff;
+  top: 0;
+  left: 0; 
+  right: 0;
+  margin: 0 auto;
+  width: 100%;
+  height: 90px;
+  z-index: 20;
+}
+/*グローバルナビゲーション  openクラス付与時のみ表示させる*/
+#navi {
+  display: block;
+  position: fixed;
+  width: 300px;
+  top: 0;
+  left: -300px;
+  bottom: 0;
+  background-color: #3a3a3a;
+  padding: 60px 90px 0 30px; 
+  transition: all 0.5s;
+  z-index: 50;
+  opacity: 0;
+  color: #fff;
+  overflow-y: auto; /*スマホ横向きの対策*/
+  @include tab {
+    width: 240px;
+    left: -240px;
+    padding-right: 30px;
+  }
+  li {
+    margin-bottom: 35px; 
+    padding: 5px 0;
+    color: #3db184;
+  }
+  a {
+    display: block; 
+    position: relative; 
+    color: #fff;
+    &:hover {
+      color: #3db184;
+      text-shadow: 0 0 25px #fff;
+    }
+    /*hoverで入れ替わる下線*/
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: 0;  
+      width: 100%;
+      height: 1px;
+      background-color: #3db184;
+      opacity: 0;
+      left: -100%;
+      transition: 0.75s;
+    }
+    &::after {
+      @extend ::before;
+      opacity: 1;
+      background-color: #fff;
+      left: 0;
+      transition: 0.5s;
+    }
+    &:hover {
+      &::before {
+        opacity: 1;
+        transform: translateX(100%);
+      }
+      &::after {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+    } 
+  }
+  .navi-title {
+    margin-bottom: 60px;
+    font-size: 1.5rem;
+  }
+}
+
+/*ハンバーガーメニュー*/
+.hamburger {
+  position: fixed;
+  top: 30px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  z-index: 40;
+  span {
+    position: absolute;
+    left: 3px;
+    width: 34px;
+    height: 2px;
+    background-color: #333;
+    border-radius: 4px;
+    transition: all 0.5s ease-in-out;
+    &:nth-child(1) {
+      top: 9px;
+    }
+    &:nth-child(2) {
+        top: 19px;
+    }
+    &:nth-child(3) {
+      bottom: 9px;
+    }
+  }
+}
+#mask {
+  display: none;
+  transition: all 0.5s;
+}
+/*ハンバーガーメニュークリック時に作動する(main.js 69行目〜)*/
+.open {
+  #navi {
+  left: 0;
+  opacity: 1;
+  }
+  .hamburger span {
+    background-color: #fff;
+    &:nth-child(1) {
+      top: 19px;
+      transform: rotate(-315deg);
+    }
+    &:nth-child(2) {
+    opacity: 0;
+    }
+    &:nth-child(3) {
+    top: 19px;
+    transform: rotate(315deg);
+    }
+  }
+  /*navi以外を暗くする*/
+  #mask {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    opacity: 0.7;
+    z-index: 30;
+    cursor: pointer;
+  }
+}
+
+
+/*------------------------------------
+  index.php
+--------------------------------------*/
+/*メインビジュアル*/
+#mainvisual {
+  padding-top: 100px;
+  height: calc(100vh - 100px);
+  position: relative;
+  margin-bottom: 180px;
+  @include tab {
+    margin-bottom: 90px;
+  }
+  .logo {
+    position: absolute;
+    bottom: -100px;
+    left: 2%;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 3;
+    width: 45%;
+    min-width: 400px;
+    height: 180px;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0px 0px 15px 15px rgba(255, 255, 255, 0.8);
+    @include tab {
+      height: 160px;
+      width: 100%;
+      left: 0;
+    }
+    img {
+      height: 140px;
+      @include tab {
+        height: 120px;
+      }
+    }
+  }
+}
+/*入れ替わり現れるメインビジュアル*/
+.fade {
+  li{
+    position: absolute;
+    width: 80%;
+    top: 0;
+    right: 0;
+    opacity: 0;
+    z-index: 2;
+    animation: fade 15s infinite;
+    @include tab {
+      width: 100%;
+    }
+    /*5秒おきに画像が切り替わる*/
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+    &:nth-child(2) {
+      animation-delay: 5s;
+    }
+    &:nth-child(3) {
+      animation-delay: 10s;
+    }
+  }
+  img {
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+  }
+}
+/*0%〜13%: およそ2秒かけて出現
+  30%〜40%: 次の画像との切り替わり（33%〜46%の間に次の画像がフェードインする）
+  */
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  13% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/*ABOUT*/
+/*背景設定：background-size: coverとbackground-attachment: fixedが両立不可のため、
+　　　　　　背景用のクラス(fadebg)を設定し、position:fixedで画面全体に固定*/
+#about {
+  color:rgb(255, 255, 255);
+  padding: 120px 0;
+  @include tab {
+    padding: 90px 0;
+  }
+}
+.about-item {
+  padding: 10px;
+  margin-bottom: 60px;
+  img {
+    width: 60%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    position: relative;
+    @include tab {
+      width: 100%;
+      height: 300px; 
+    }
+    @include sp {
+      height: 260px; 
+    }
+  }
+  p {
+    position: absolute;
+    text-align: center; 
+    background-color: #3db18592;
+    font-size: 1.125rem;
+    left: 50%;
+    top: 66%;
+    padding: 20px 60px;
+    @include pc {    
+      left: 45%;   
+      padding: 20px 40px;
+    }
+    @include tab {        
+      font-size: 1.0625rem;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      top: 75%;
+      width: 90%;
+    }
+    @include sp {        
+      font-size: 0.875rem; 
+      width: 100%;
+      padding: 20px 15px;
+    }
+  }
+  &:nth-child(2){
+    text-align: right;
+    p {
+      left: 12%;
+      @include pc {
+        left: 8%;
+      }
+      @include tab {
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+      }
+    }
+  }
+}
+.fadebg {
+  background: url("../img/heart.jpg") center center no-repeat;
+  background-size: cover;
+  width: 100vw;
+  height: 120vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: -1;
+}
+
+/*PLANTS
+  カルーセルスライダーの設定はmain.jsの87行目〜*/
+#slider img{
+  width: auto;
+  max-width: 450px;
+  height: 400px;
+  object-fit: cover;
+  @include pc{
+    max-height: 350px;
+  }
+  @include tab{
+    max-width: 300px;
+    max-height: 280px;
+  }
+}
+
+/*NEWS*/
+.news-list {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 45px 75px 0 75px;
+  @include pc {
+    padding: 35px 50px 0 50px;
+  }
+  @include tab{
+    padding: 0 15px;
+    flex-direction: column;
+  }
+  dt {
+    width: 25%;
+    padding: 20px 35px;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    @include pc {
+      padding: 20px;
+    }
+    @include tab{
+      width: 100%;
+      font-size: 0.8125rem;
+      border-bottom: none;
+      padding: 15px 10px 0 10px;
+    }
+  }
+  dd {
+    width: 75%;
+    padding: 20px 35px;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    @include pc {
+      padding: 20px;
+    }
+    @include tab{      
+      width: 100%;    
+      font-size: 0.875rem;
+      padding: 8px 10px 15px 10px;
+    }
+  }
+}
+
+/*------------------------------------
+  research.php
+--------------------------------------*/
+#items {
+  .item-title /*大見出し(h3)*/ {
+    font-size: 1.5rem;
+    border-bottom: 1px solid rgb(108, 171, 120);
+    margin: 30px 0;
+    @include pc{
+      font-size: 1.375rem; 
+    }
+    @include tab{
+      font-size: 1.25rem;
+    }
+    @include sp{
+      font-size: 1.125rem;
+    }
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    @include tab {
+      flex-direction: column;
+    }
+  }
+  li {
+    width: 48%;
+    margin: 40px 0;
+    text-align: center;
+    @include tab {
+      width: 100%;
+    }
+  }
+  .mini-title /*小見出し(h4)*/ {
+    position: absolute;
+    font-size: 1.25rem;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    color: rgb(255, 255, 255);
+    background-color: #3db184;
+    padding: 3px 7px;
+    @include tab{
+      font-size: 1rem;
+    }
+  }
+  .item-image {
+    position: relative;
+    background-color: #fff;
+    height: 250px;
+    a {
+      transition: 0.5s;
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+    img { 
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+  } 
+} 
+#research p {
+  @include pc {
+    font-size: 0.9325rem;
+  }
+  @include tab {
+    font-size: 0.875rem;
+  }
+}
+
+/*------------------------------------
+  item.php (researchの詳細ページ)
+--------------------------------------*/
+#single {
+  .single-title{
+    font-size: 2rem;
+    margin: 60px 0;
+    position: relative;
+    border-bottom: 2px solid #3db184;
+    @include pc {
+      font-size: 1.5rem;
+    }
+    @include sp {
+      font-size: 1.25rem;
+    }
+    .en-title {
+      font-weight: 400;
+      margin-left: 40px;
+      font-size: 1.125rem;
+      @include tab {
+        display: none;
+      }
+    }
+  } 
+  .research-item {
+    text-align: center;
+    p {
+      margin-bottom: 40px;
+      margin-top: 35px;
+    }
+    img {
+      height: 350px;
+      margin-bottom: 45px; 
+      @include tab {
+        max-height: 350px;
+        min-height: 200px;
+        min-width: 75%;
+        height: auto;
+        margin-bottom: 30px;
+      }
+    }
+  }
+}
+
+/*------------------------------------
+  member.php
+--------------------------------------*/
+/*教授陣*/
+.professor-profile {
+  li {
+    margin-bottom: 100px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    @include tab {
+      flex-direction: column;
+      justify-content: center;
+    }
+  img {
+      height: 400px;
+      width: auto;
+      @include tab {
+        margin-bottom: 20px
+      }
+      @include sp {
+        width: 90%;
+        height: auto;
+      }
+      }
+    }
+  }
+.profile {
+  width: 44%;
+  margin-left: 100px;
+  @include pc {
+    margin-left: 30px;
+  }
+  @include tab {
+    width: 320px;
+    margin-left: 0;
+  }
+  .name {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #3db184;
+    .post {
+      display: block;
+      margin-bottom: 6px;
+    }
+    .ja {
+      font-weight: bold;
+      font-size: 1.875rem;
+      margin-right: 3px;
+      @include pc {
+        font-size: 1.625rem;
+      }
+      @include tab {
+        font-size: 1.5rem;
+      }
+    }
+  }
+  dt {
+    margin-bottom: 5px;
+  }
+  dd {
+    margin-bottom: 20px;
+    padding-left: 25px;
+    @include pc {      
+      padding-left: 15px;
+    }
+    @include tab {
+      font-size: 0.9325rem;
+    }
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+    @include tab {      
+      margin-bottom: 15px;
+    }
+  }
+}
+/*メンバー*/
+#others{
+  .member-title {
+    font-size: 1.625rem;
+    border-bottom: 1px solid #3db184;
+    margin: 60px auto 40px 0;
+  }
+  .member-profile {
+    padding-left: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    &:first-of-type .name:first-child {
+      @include tab {
+        width: 100%;
+      }
+    }
+  }
+}
+#others .name {
+  width: 48%;
+  margin-bottom: 20px;
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: 10px;
+    width: 10px;
+    height: 16px;
+    background-color: #b8e4cb;
+  }
+  .ja {
+    font-weight: bold;
+    font-size: 1.5rem;
+    display: block;
+    @include tab {
+      font-size: 1.25rem;
+    }
+  }
+  .en { 
+    display: block;
+    margin-left: 75px;
+    @include tab {
+      margin-left: 10px;
+      font-size: 0.875rem;
+    }
+    @include sp {
+      margin-left: 0;
+      font-size: 0.6875rem;
+    }
+  }
+}
+/*研究者情報、publication(および論文のリンク)*/
+.researcher {
+  display: inline-block;
+  font-size: 0.8125rem;
+  padding: 0 9px;
+  border-radius: 4px;
+  margin: 0 6px 10px 0;
+  border: 1px solid #3db184;
+  background-color: #3db184;
+  transition: 0.5s;
+  color: #fff;
+  &:last-child {
+    margin-right: 0;
+  }
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+/*------------------------------------
+  publication.php(pickupページ)
+--------------------------------------*/
+.new {
+  position: relative;
+  height: 580px;
+  margin-bottom: 160px;
+  @include tab {
+    height: auto;
+    margin-bottom: 90px;
+  }
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 400px;
+    @include tab{
+      position: static;
+      display: block;
+      margin: 0 auto;
+      height: auto;
+    }
+  }
+  .text {
+    position: absolute;
+    top: 62%;
+    right: 0;
+    border: 2px solid #3db184;
+    background-color: rgba(255, 255, 255, 0.785);
+    width: 650px;
+    padding: 20px 30px;
+    @include tab{
+      position: static;
+      padding: 10px 20px;
+      width: 100%;
+    }
+    @include sp{
+      padding: 10px;
+    }
+  }
+  p {
+    &:first-child {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      @include tab{
+        margin-bottom: 20px;
+        font-size: 1.125rem;
+      }
+      @include sp{
+        margin-bottom: 20px;
+        font-size: 1rem;
+      }
+    }
+    &:nth-child(n+2) {
+      margin-bottom: 15px;
+      @include tab{
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+/*------------------------------------
+  publication.php(詳細ページ)
+--------------------------------------*/
+/*アコーディオンメニュー自体のスタイル
+  閉じている時、ホバー時、開いている時で3段階に色が変わる*/
+#ac-menu {
+  margin-top: 30px;
+  .label {
+    cursor: pointer;
+    background-color: #b8e4cb20;  /*閉じている時*/
+    font: {
+      weight: bold;
+      size: 1.125rem;
+    }
+    padding: 30px;
+    position: relative;
+    transition: 0.5s;
+    @include tab{
+      padding: 23px;
+      font-size: 1rem;
+    }
+    &::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: #000;
+      position: absolute;
+      top: 50%;
+      right: 5%;
+      transform: translateY(-50%);
+    }
+    &::after {
+      @extend ::before;
+      transform: translateY(-50%) rotate(90deg); 
+      transition: 0.5s; 
+    }
+    &:hover {
+      background-color: #b8e4cb70;  /*ホバー時*/
+    }
+  }
+  li {
+    border-top: solid 1px #3db185b0;
+    &:last-child {
+      border-bottom: solid 1px #3db185b0;
+    }
+  }
+}
+/*アコーディオンメニューの中身*/
+.detail {
+  display: none;
+  dt {
+    font: {
+      weight: bold;
+      size: 1.625rem;
+    }
+    padding: 30px 20px;
+    border-top: 1px solid #3db185b0;
+    position: relative;
+    @include pc{
+      font-size: 1.5rem; 
+    }
+    @include tab{
+      font-size: 1.125rem; 
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 35px;
+      width: 10px;
+      height: 30px;
+      background-color: #b8e4cb;
+      @include tab{
+        top: 30px;
+        height: 25px; 
+      }
+    } 
+  }
+  dd {
+    padding: 0 20px 10px 20px;
+    @include tab{
+      font-size: 0.875rem; 
+    }
+  } 
+  .publish-link {
+    padding: 10px 0 15px 0;
+  }
+}
+/*アコーディオンメニューのクリックイベント*/
+#ac-menu .label.open {
+  background-color: #b8e4cb;  /*開いている時*/
+  &::before {
+    opacity: 0;
+  }
+  &::after {
+    opacity: 1;
+    transform: rotate(180deg);
+  }
+}
+/*ページネイション*/
+.pagination {
+  margin-top: 90px;
+  text-align: center;
+  font-size: 1.25rem;
+  @include tab {
+    font-size: 1rem;
+  }
+  ul {
+    display: flex;
+    justify-content: center;
+  }
+  li {
+    width: 20px;
+    height: 20px;
+    margin: 0 30px;
+    @include tab {
+      margin: 0 20px;
+    }
+  }
+  a {
+    position: relative;
+    transition: 0.3s;
+    
+    &::after {
+      content: '';
+      background-color: #3db184;
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      bottom: -1px;
+      left: 0;
+      transition: 0.5s ease-out;
+    }
+    &:hover {
+      opacity: 0.5;
+      &::after {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+    }
+  }
+}
+.back {
+  margin-top: 60px;
+  text-align: center;
+  @include tab {
+    margin-top: 40px;
+  }
+}
+
+/*------------------------------------
+  contact.php
+--------------------------------------*/
+iframe {
+  width: 100%;
+  margin-bottom: 25px;
+  @include pc {
+    height: 400px;
+  }
+  @include tab {
+    height: 320px;
+    margin-bottom: 0;
+  }
+} 
+.link-title {
+  font-size: 1.5rem;
+  border-bottom: 1px solid #3db184;
+  margin: 60px 0 0 0;
+  @include pc{
+    font-size: 1.375rem; 
+  }
+  @include tab{
+    font-size: 1.25rem;
+  }
+}
+/*経路*/
+.contact-list {
+  dt {
+    font-weight: bold;
+    font-size: 1.25rem;
+    margin: 35px 0 10px 20px;
+    position: relative;
+    @include pc{
+      font-size: 1.125rem;
+    }
+    span {
+      font-size: 0.75rem;
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      left: -20px;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border: 10px solid transparent;
+      border-left: 10px solid #b8e4cb;
+    }
+  }
+  dd {
+    margin-left: 20px;
+    @include pc{
+      font-size: 0.9325rem;
+    }
+    @include tab{
+      font-size: 0.875rem;
+    }
+  }
+}
+/*連絡先*/
+.address {
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    @include sp{
+      flex-direction: column;
+    }
+  }
+  li {
+    width: 50%;
+    @include sp{
+      width: 100%;
+    }
+  }
+  span {
+    font-size: 0.75rem;
+    display: inline-block;
+    padding-left: 10px;
+  }
+  /*contact-listのスタイルを引き継ぎ*/
+  p {
+    &:first-of-type {
+      @extend dt;
+    }
+    &:nth-of-type(2) {
+      @extend dd;
+    }
+  }
+}
+.attention {
+  font-size: 0.875rem;
+}
+
+/*リンク集*/
+#link {
+  ul {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    @include tab{
+      margin-top: 20px;
+    }
+  }
+  li {
+    width: 45%;
+    margin-bottom: 25px;
+    padding-left: 20px;
+    @include tab {
+      width: 100%;
+      padding-left: 20px;
+      margin-bottom: 18px;
+      font-size: 0.875rem;
+    }
+    @include sp {
+      padding-left: 10px;
+    }
+  }
+  a {
+    @extend .line;
+  }
+  .long {
+    width: 100%;
+  }
+}
+
+/*------------------------------------
+  footer
+--------------------------------------*/
+#footer {
+  /*bodyの最下部に固定(13行目参照)*/
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #121212;
+  color: #fff;
+  padding: 50px 20px 20px 20px;
+  @include tab{
+    padding-top: 35px;
+    p {
+      text-align: center;
+    }
+  }
+  .footer-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    @include tab{
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+  }
+  .ad {
+    width: 50%;
+    font-size: 0.9rem;
+    line-height: 2;
+    @include tab {
+      width: 100%;
+      font-size: 0.75rem;
+      margin-bottom: 20px;
+    }
+  }
+  .labo {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 10px 0;
+    @include tab {
+      margin: 0;
+    }
+  }
+  .copy {
+    font-size: 0.625rem; 
+  }
+}
+
+
+
+/*# sourceMappingURL=style.css.map */
