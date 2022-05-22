@@ -83,9 +83,7 @@ jquery.inview.min.jsファイル、slick.min.jsファイルはjQueryプラグイ
 - mdファイル<br>
 このファイルです。
 
-
-
-※更新が必要なファイル
+## 更新が必要なファイル
 - _inc/publication_template.php
 - index.php
 - member.php
