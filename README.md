@@ -57,11 +57,13 @@ wwwサーバーのアドレス等の情報はバインダーにまとめられ�
 
 基本的に四月末までには1.~3.までを完了させておくこと。
 
-# ページ構成（2022.05.11更新）
-- 主要なページ： index.php/ research.php/ member.php/ publication.php/ contact.php
-- 子ページ： items.php (research.phpの下流)/ publications.php (publication.phpの下流)
 
 # ファイルについての説明（2022.05.11更新）
+## ページ階層
+- 主要なページ：index.php/research.php/member.php/publication.php/contact.php
+- 子ページ：items.php (親：research.php)/publications.php (親：publication.php)
+
+## 各種フォルダ／ファイル
 - _incフォルダ<br>
 header、footer、各種templateなど、共通パーツを記述したphpファイルです。他のphpファイルにincludeで埋め込みます。
 - CSSフォルダ<br>
@@ -80,6 +82,8 @@ jquery.inview.min.jsファイル、slick.min.jsファイルはjQueryプラグイ
 ホームページ上に表示されるファイルです。htmlにphpを埋め込んだ形になっています。
 - mdファイル<br>
 このファイルです。
+
+
 
 ※更新が必要なファイル
 - _inc/publication_template.php
